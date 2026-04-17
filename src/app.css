@@ -1,0 +1,50 @@
+/* CSS Variables & Global Reset */
+:root {
+  --color-bg: #fafaf8;
+  --color-surface: #ffffff;
+  --color-border: #d4d0c8;
+  --color-border-focus: #8b7d5e;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b6860;
+  --color-accent: #5c4a2a;
+  --color-accent-hover: #7a6240;
+  --color-tab-active: #5c4a2a;
+  --color-tab-bg: #f0ede8;
+  --color-btn-hover: #f0ede8;
+  --color-overlay-bg: rgba(0,0,0,0.45);
+  --color-chord-bg: #2d2410;
+  --color-chord-text: #f5f0e8;
+
+  --font-hebrew: "SBL Hebrew", "Ezra SIL", "Times New Roman", "David", serif;
+  --font-ui: system-ui, -apple-system, sans-serif;
+
+  --radius: 6px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+
+  --editor-font-size: 28px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+}
