@@ -19,6 +19,7 @@
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
+      e.preventDefault();
       onClose();
       return;
     }
@@ -29,6 +30,7 @@
     }
     const found = items.find((item) => item.key === e.key);
     if (found) {
+      e.preventDefault();
       onInsert(found);
       onClose();
     }
