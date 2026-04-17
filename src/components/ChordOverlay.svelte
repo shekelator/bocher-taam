@@ -20,25 +20,28 @@
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
       e.preventDefault();
+      e.stopImmediatePropagation();
       onClose();
       return;
     }
     if (e.key === 'Tab') {
       e.preventDefault();
+      e.stopImmediatePropagation();
       paletteStore.setActiveTab(paletteStore.activeTab === 'nekudot' ? 'teamim' : 'nekudot');
       return;
     }
     const found = items.find((item) => item.key === e.key);
     if (found) {
       e.preventDefault();
+      e.stopImmediatePropagation();
       onInsert(found);
       onClose();
     }
   }
 
   $effect(() => {
-    window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
+    window.addEventListener('keydown', handleKeydown, true);
+    return () => window.removeEventListener('keydown', handleKeydown, true);
   });
 </script>
 
