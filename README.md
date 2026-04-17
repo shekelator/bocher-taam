@@ -10,7 +10,7 @@ A client-side Hebrew Nikud & Te'amim editor built with Svelte 5 + TypeScript. Ad
 ### Install & Run
 ```bash
 npm install
-npm run dev
+npm run dev -- --host 0.0.0.0
 ```
 Open http://localhost:5173
 
