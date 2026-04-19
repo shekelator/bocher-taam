@@ -32,7 +32,7 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     cursor: pointer;
-    min-width: 80px;
+    min-width: 88px;
     transition: background 0.1s, border-color 0.1s;
   }
 
@@ -43,19 +43,19 @@
 
   .glyph {
     font-family: var(--font-hebrew);
-    font-size: 1.8em;
+    font-size: 2rem;
     line-height: 1.4;
   }
 
   .label {
-    font-size: 0.7em;
+    font-size: 0.75rem;
     color: var(--color-text-muted);
     text-align: center;
     white-space: nowrap;
   }
 
   .key {
-    font-size: 0.65em;
+    font-size: 0.7rem;
     padding: 1px 5px;
     background: var(--color-tab-bg);
     border: 1px solid var(--color-border);

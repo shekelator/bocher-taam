@@ -20,6 +20,31 @@ npm run build
 ```
 Output is in `build/` — ready for GitHub Pages.
 
+## Deploy to CloudFront
+
+This repo includes a GitHub Actions workflow at `.github/workflows/deploy-cloudfront.yml` that builds the app, uploads `build/` to the `bocher-taam/` prefix in S3, and invalidates a CloudFront distribution.
+
+### GitHub repository variables
+
+Add these repository variables before running the workflow:
+
+| Variable | Description |
+|-----|--------|
+| `AWS_REGION` | AWS region for the deployment role and S3 bucket |
+| `AWS_ROLE_TO_ASSUME` | IAM role ARN assumed by GitHub Actions via OIDC |
+| `S3_BUCKET` | S3 bucket name that stores the built site under the hard-coded `bocher-taam/` prefix |
+| `CLOUDFRONT_DISTRIBUTION_ID` | CloudFront distribution ID to invalidate after upload |
+
+### AWS prerequisites
+
+1. Configure GitHub OIDC trust on the deployment role for this repository.
+2. Grant that role `s3:ListBucket`, `s3:PutObject`, and `s3:DeleteObject` on the bucket, plus `cloudfront:CreateInvalidation` on the distribution.
+3. Configure CloudFront with `index.html` as the default root object and map `403` and `404` errors to `/index.html` with a `200` response so SPA routes work on refresh.
+
+### Triggering deploys
+
+The workflow runs on pushes to `main` or `master`, and it can also be triggered manually from the Actions tab.
+
 ## Usage Guide
 
 1. **Type or paste Hebrew text** into the editor area (RTL, large font)
@@ -58,3 +83,7 @@ src/
   app.css         # Global CSS variables + reset
 ```
 Simple editor for adding nekudot and te'amim to Hebrew text
+
+## TODOs
+- Dark mode
+- Build pipeline, deployment somewhere
