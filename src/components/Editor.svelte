@@ -9,17 +9,51 @@
   import Palette from './Palette.svelte';
   import Toolbar from './Toolbar.svelte';
 
+  const MIN_FONT_SIZE = 12;
+  const MAX_FONT_SIZE = 72;
+  const FONT_SIZE_STEP = 4;
+
   let editorEl: HTMLDivElement;
   let fontSize = $state(28);
   let lastCursorOffset = $state(0);
 
-  function increaseFontSize() { fontSize = Math.min(fontSize + 4, 72); }
-  function decreaseFontSize() { fontSize = Math.max(fontSize - 4, 12); }
+  function increaseFontSize() {
+    fontSize = Math.min(fontSize + FONT_SIZE_STEP, MAX_FONT_SIZE);
+  }
+
+  function decreaseFontSize() {
+    fontSize = Math.max(fontSize - FONT_SIZE_STEP, MIN_FONT_SIZE);
+  }
 
   function handleInput() {
     if (!editorEl) return;
     const rawText = editorEl.innerText;
     documentStore.setContent(rawText);
+  }
+
+  function isIncreaseFontShortcut(e: KeyboardEvent) {
+    return e.key === '=' || e.key === '+' || e.key === 'Add' || e.code === 'NumpadAdd';
+  }
+
+  function isDecreaseFontShortcut(e: KeyboardEvent) {
+    return e.key === '-' || e.key === '_' || e.key === 'Subtract' || e.code === 'NumpadSubtract';
+  }
+
+  function handleGlobalKeydown(e: KeyboardEvent) {
+    const isMod = e.ctrlKey || e.metaKey;
+
+    if (!isMod) return;
+
+    if (isIncreaseFontShortcut(e)) {
+      e.preventDefault();
+      increaseFontSize();
+      return;
+    }
+
+    if (isDecreaseFontShortcut(e)) {
+      e.preventDefault();
+      decreaseFontSize();
+    }
   }
 
   function handleKeydown(e: KeyboardEvent) {
@@ -32,8 +66,6 @@
     }
 
     const isMod = e.ctrlKey || e.metaKey;
-    if (isMod && (e.key === '=' || e.key === '+')) { e.preventDefault(); increaseFontSize(); return; }
-    if (isMod && e.key === '-') { e.preventDefault(); decreaseFontSize(); return; }
     if (isMod && e.shiftKey && e.key === 'C') { e.preventDefault(); navigator.clipboard.writeText(documentStore.content); return; }
     if (isMod && e.shiftKey && e.key === 'S') { e.preventDefault(); saveAsFile(); return; }
   }
@@ -81,6 +113,11 @@
     return () => document.removeEventListener('selectionchange', handleSelectionChange);
   });
 
+  $effect(() => {
+    window.addEventListener('keydown', handleGlobalKeydown);
+    return () => window.removeEventListener('keydown', handleGlobalKeydown);
+  });
+
   // Initialize editor with stored content
   $effect(() => {
     if (editorEl && documentStore.content && !editorEl.innerText) {
@@ -101,12 +138,13 @@
       bind:this={editorEl}
       contenteditable="true"
       role="textbox"
+      tabindex="0"
       aria-multiline="true"
       aria-label="Hebrew text editor"
       dir="rtl"
       lang="he"
       class="editor"
-      style="font-size: {fontSize}px"
+      style:font-size={`${fontSize}px`}
       oninput={handleInput}
       onkeydown={handleKeydown}
       onfocus={handleFocus}
