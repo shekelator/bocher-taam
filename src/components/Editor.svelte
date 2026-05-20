@@ -4,6 +4,14 @@
   import { insertDiacritic } from '$lib/engine/cluster';
   import { documentStore } from '$lib/stores/document.svelte';
   import { paletteStore } from '$lib/stores/palette.svelte';
+  import {
+    replaceDivineNameOccurrences,
+    type DivineNameReplacement
+  } from '$lib/text/divine-name';
+  import {
+    removeHebrewMarks,
+    type HebrewMarkRemoval
+  } from '$lib/text/strip-marks';
   import type { DiacriticDef } from '$lib/types';
   import ChordOverlay from './ChordOverlay.svelte';
   import Palette from './Palette.svelte';
@@ -98,6 +106,29 @@
     editorEl.focus();
   }
 
+  async function applyDocumentTransformation(transform: (text: string) => string) {
+    if (!editorEl) return;
+
+    const updatedText = transform(documentStore.content);
+    documentStore.setContent(updatedText);
+
+    editorEl.innerText = updatedText;
+    await tick();
+
+    const nextCursorOffset = Math.min(lastCursorOffset, updatedText.length);
+    setCursorOffset(editorEl, nextCursorOffset);
+    lastCursorOffset = nextCursorOffset;
+    editorEl.focus();
+  }
+
+  async function handleReplaceDivineName(replacement: DivineNameReplacement) {
+    await applyDocumentTransformation((text) => replaceDivineNameOccurrences(text, replacement));
+  }
+
+  async function handleRemoveHebrewMarks(removal: HebrewMarkRemoval) {
+    await applyDocumentTransformation((text) => removeHebrewMarks(text, removal));
+  }
+
   function handleFocus() {
     // track cursor position
   }
@@ -131,6 +162,8 @@
     {fontSize}
     onIncrease={increaseFontSize}
     onDecrease={decreaseFontSize}
+    onReplaceDivineName={handleReplaceDivineName}
+    onRemoveHebrewMarks={handleRemoveHebrewMarks}
   />
 
   <div class="editor-area">

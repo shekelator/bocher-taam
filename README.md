@@ -166,6 +166,11 @@ src/
 ```
 Simple editor for adding nekudot and te'amim to Hebrew text
 
+<<<<<<< Updated upstream
 ## TODOs
 - Dark mode
 - Build pipeline, deployment somewhere
+=======
+## TODOs and additional features
+ - "Remove all" te'amim and nekudot (on selection?)
+>>>>>>> Stashed changes

@@ -1,15 +1,27 @@
 <script lang="ts">
+  import {
+    DIVINE_NAME_REPLACEMENT_OPTIONS,
+    type DivineNameReplacement
+  } from '$lib/text/divine-name';
+  import {
+    HEBREW_MARK_REMOVAL_OPTIONS,
+    type HebrewMarkRemoval
+  } from '$lib/text/strip-marks';
   import { documentStore } from '$lib/stores/document.svelte';
 
   interface Props {
     fontSize: number;
     onIncrease: () => void;
     onDecrease: () => void;
+    onReplaceDivineName: (replacement: DivineNameReplacement) => void;
+    onRemoveHebrewMarks: (removal: HebrewMarkRemoval) => void;
   }
 
-  let { fontSize, onIncrease, onDecrease }: Props = $props();
+  let { fontSize, onIncrease, onDecrease, onReplaceDivineName, onRemoveHebrewMarks }: Props = $props();
 
   let showHelp = $state(false);
+  let divineNameReplacement = $state<DivineNameReplacement>('double-yud');
+  let hebrewMarkRemoval = $state<HebrewMarkRemoval>('teamim');
 
   async function copyToClipboard() {
     try {
@@ -32,20 +44,48 @@
 
 <div class="toolbar">
   <div class="toolbar-group">
+    <button onclick={saveAsFile} title="Save as .txt (Ctrl/Cmd+Shift+S)">
+      💾 Save
+    </button>
+    <button onclick={copyToClipboard} title="Copy all to clipboard (Ctrl/Cmd+Shift+C)">
+      📋 Copy
+    </button>
+    <button onclick={() => showHelp = !showHelp} title="Keyboard shortcuts">
+      ❓ Help
+    </button>
+  </div>
+
+  <div class="toolbar-group">
     <button onclick={onDecrease} title="Decrease font size (Ctrl/Cmd -)">A−</button>
     <span class="font-size">{fontSize}px</span>
     <button onclick={onIncrease} title="Increase font size (Ctrl/Cmd +)">A+</button>
   </div>
 
   <div class="toolbar-group">
-    <button onclick={copyToClipboard} title="Copy all to clipboard (Ctrl/Cmd+Shift+C)">
-      📋 Copy
+    <select bind:value={divineNameReplacement} aria-label="Divine name replacement">
+      {#each DIVINE_NAME_REPLACEMENT_OPTIONS as option}
+        <option value={option.value}>{option.label}</option>
+      {/each}
+    </select>
+    <button
+      onclick={() => onReplaceDivineName(divineNameReplacement)}
+      title="Replace all occurrences of the divine name"
+    >
+      Replace divine name
     </button>
-    <button onclick={saveAsFile} title="Save as .txt (Ctrl/Cmd+Shift+S)">
-      💾 Save
-    </button>
-    <button onclick={() => showHelp = !showHelp} title="Keyboard shortcuts">
-      ❓ Help
+  </div>
+
+  <div class="toolbar-group">
+    <select bind:value={hebrewMarkRemoval} aria-label="Hebrew mark removal">
+      {#each HEBREW_MARK_REMOVAL_OPTIONS as option}
+        <option value={option.value}>{option.label}</option>
+      {/each}
+    </select>
+    <button
+      onclick={() => onRemoveHebrewMarks(hebrewMarkRemoval)}
+      title="Remove the selected Hebrew marks while leaving punctuation"
+    >
+      Remove marks
     </button>
   </div>
 </div>
@@ -88,6 +128,15 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
+  }
+
+  select {
+    padding: 5px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.875rem;
   }
 
   button {
