@@ -7,7 +7,12 @@
     HEBREW_MARK_REMOVAL_OPTIONS,
     type HebrewMarkRemoval
   } from '$lib/text/strip-marks';
+  import {
+    TRANSLITERATION_STYLE_OPTIONS,
+    type TransliterationStyle
+  } from '$lib/text/transliterate';
   import { documentStore } from '$lib/stores/document.svelte';
+  import { transliterationStore } from '$lib/stores/transliteration.svelte';
 
   interface Props {
     fontSize: number;
@@ -86,6 +91,24 @@
       title="Remove the selected Hebrew marks while leaving punctuation"
     >
       Remove marks
+    </button>
+  </div>
+  <div class="toolbar-group">
+    <select
+      value={transliterationStore.styleId}
+      onchange={(e) => transliterationStore.setStyleId(e.currentTarget.value as TransliterationStyle)}
+      aria-label="Transliteration style"
+    >
+      {#each TRANSLITERATION_STYLE_OPTIONS as option}
+        <option value={option.value}>{option.label}</option>
+      {/each}
+    </select>
+    <button
+      onclick={() => transliterationStore.toggleEnabled()}
+      aria-pressed={transliterationStore.enabled}
+      title="Toggle the transliteration pane"
+    >
+      Transliterate
     </button>
   </div>
 </div>

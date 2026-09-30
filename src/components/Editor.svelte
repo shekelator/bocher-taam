@@ -3,7 +3,9 @@
   import { getCursorOffset, setCursorOffset } from '$lib/engine/cursor';
   import { insertDiacritic } from '$lib/engine/cluster';
   import { documentStore } from '$lib/stores/document.svelte';
+  import { transliterationStore } from '$lib/stores/transliteration.svelte';
   import { paletteStore } from '$lib/stores/palette.svelte';
+  import { transliterateText } from '$lib/text/transliterate';
   import {
     replaceDivineNameOccurrences,
     type DivineNameReplacement
@@ -125,6 +127,20 @@
     await applyDocumentTransformation((text) => replaceDivineNameOccurrences(text, replacement));
   }
 
+  let transliterated = $derived(
+    transliterationStore.enabled
+      ? transliterateText(documentStore.content, transliterationStore.styleId)
+      : ''
+  );
+
+  async function copyTransliteration() {
+    try {
+      await navigator.clipboard.writeText(transliterated);
+    } catch {
+      // fallback — do nothing
+    }
+  }
+
   async function handleRemoveHebrewMarks(removal: HebrewMarkRemoval) {
     await applyDocumentTransformation((text) => removeHebrewMarks(text, removal));
   }
@@ -184,6 +200,24 @@
     ></div>
   </div>
 
+  {#if transliterationStore.enabled}
+    <section class="transliteration" aria-label="Transliteration">
+      <div class="transliteration-header">
+        <span class="transliteration-label">Transliteration</span>
+        <button onclick={copyTransliteration} title="Copy transliteration to clipboard">
+          📋 Copy
+        </button>
+      </div>
+      <div
+        class="transliteration-text"
+        dir="ltr"
+        lang="en"
+        spellcheck="false"
+        translate="no"
+      >{transliterated}</div>
+    </section>
+  {/if}
+
   <Palette onInsert={handleInsert} />
 
   {#if paletteStore.chordMode}
@@ -217,5 +251,46 @@
     white-space: pre-wrap;
     word-break: break-word;
     caret-color: var(--color-accent);
+  }
+
+  .transliteration {
+    flex-shrink: 0;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .transliteration-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .transliteration-label {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  .transliteration-header button {
+    padding: 2px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    font-size: 0.8rem;
+    color: var(--color-text);
+  }
+
+  .transliteration-header button:hover {
+    background: var(--color-btn-hover);
+  }
+
+  .transliteration-text {
+    max-height: 150px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 </style>
