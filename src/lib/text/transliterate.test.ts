@@ -62,6 +62,7 @@ describe('isTransliterationStyle', () => {
     expect(DEFAULT_TRANSLITERATION_STYLE).toBe('brill-simple');
   });
 });
+
 describe('nechama style', () => {
   // Examples straight from shekelator/nechama internal/transliteration/rules.go
   const cases: Array<[description: string, hebrew: string, expected: string]> = [
