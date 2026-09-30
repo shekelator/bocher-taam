@@ -8,7 +8,7 @@ import {
 } from './transliterate';
 
 describe('transliterateText', () => {
-  it('transliterates with the default SBL academic style', () => {
+  it('transliterates with the SBL academic style', () => {
     expect(transliterateText('שֶׁ֣לֶם', 'sbl-academic')).toBe('šelem');
     expect(transliterateText('אֱלֹהִים', 'sbl-academic')).toBe('ʾĕlōhîm');
   });
